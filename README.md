@@ -36,3 +36,36 @@ bash /root/install-letsencrypt-cert.sh
 - Der Domainname (`meet.karstenschneeberger.de`) muss öffentlich erreichbar und im DNS korrekt gesetzt sein.
 - Port 80 muss offen sein, da Let's Encrypt über HTTP-01 validiert.
 - Das Zertifikat ist 90 Tage gültig und wird automatisch per `cron` oder `systemd` erneuert (je nach Jitsi-Version).
+
+### TLS-Zertifikat erneuern & prüfen
+
+Die Let's Encrypt Zertifikate sind jeweils **90 Tage gültig**. Die automatische Erneuerung erfolgt im Hintergrund über den `certbot`, sobald das Zertifikat ca. 30 Tage vor Ablauf steht.
+
+#### Manuelles Testen der Erneuerung
+
+Um zu prüfen, ob das automatische Renewal grundsätzlich funktioniert, kann folgender Befehl verwendet werden:
+
+```bash
+certbot renew --dry-run
+```
+Dieser testet den Ablauf ohne echte Verlängerung. Bei funktionierender Konfiguration sollte keine Fehlermeldung erscheinen. Mögliche Ausgabe:
+
+```yaml
+No simulated renewals were attempted.
+```
+
+Das ist normal, wenn das Zertifikat noch zu neu ist.
+
+#### Automatisches Renewal prüfen
+
+Ob ein systemd timer oder Cronjob aktiv ist, lässt sich mit folgendem Befehl prüfen:
+
+```bash
+systemctl list-timers | grep certbot
+```
+
+Oder per Logdatei:
+
+```bash
+cat /var/log/letsencrypt/letsencrypt.log
+```
