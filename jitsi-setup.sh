@@ -4,7 +4,7 @@ set -e
 echo "Starte System-Update und Grundinstallation..."
 apt update && apt -y upgrade
 
-apt -y install fail2ban ufw nginx curl gnupg2 lua5.2 btop
+apt -y install fail2ban ufw nginx certbot curl gnupg2 lua5.2 btop
 
 echo "Konfiguriere UFW Firewall..."
 ufw allow OpenSSH
