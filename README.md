@@ -20,7 +20,7 @@ bash /root/jitsi-setup.sh
 Nach erfolgreicher Ausführung von `jitsi-setup.sh` wird Jitsi zunächst mit einem selbstsignierten Zertifikat eingerichtet. Um HTTPS mit einem gültigen Let's Encrypt Zertifikat zu aktivieren, führe auf dem Server folgenden Befehl aus:
 
 ```bash
-bash /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
+/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
 ```
 
 Alternativ steht im Repository das Skript `install-letsencrypt-cert.sh` bereit, das dich vorab informiert und optional prüft, ob der Hostname korrekt aufgelöst wird:
