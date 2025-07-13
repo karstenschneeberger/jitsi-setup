@@ -349,6 +349,6 @@ systemctl restart jitsi-videobridge2
 systemctl restart prosody
 systemctl restart jicofo
 
-echo "Installation abgeschlossen. TLS-Zertifikat muss noch manuell mit install-letsencrypt-cert.sh eingerichtet werden."
+echo "Installation abgeschlossen. TLS-Zertifikat muss noch manuell mit install-letsencrypt-cert.sh eingerichtet werden!"
 
 mail -s "Jitsi-Installation abgeschlossen auf $(hostname)" karsten@karstenschneeberger.de < /var/log/jitsi-setup.log
