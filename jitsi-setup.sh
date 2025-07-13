@@ -7,7 +7,7 @@ exec > >(tee -a /var/log/jitsi-setup.log) 2>&1
 echo "Starte System-Update und Grundinstallation..."
 apt update && apt -y upgrade
 
-apt -y install fail2ban ufw nginx certbot curl gnupg2 lua5.2 btop
+apt -y install qemu-guest-agent fail2ban ufw nginx certbot curl gnupg2 lua5.2 btop
 
 echo "Konfiguriere UFW Firewall..."
 ufw allow OpenSSH
