@@ -1,10 +1,13 @@
 #!/bin/bash
 set -e
 
+# Logge alles in eine Datei zur späteren Auswertung
+exec > >(tee -a /var/log/jitsi-setup.log) 2>&1
+
 echo "Starte System-Update und Grundinstallation..."
 apt update && apt -y upgrade
 
-apt -y install fail2ban ufw nginx certbot curl gnupg2 lua5.2 btop
+apt -y install mailutils fail2ban ufw nginx certbot curl gnupg2 lua5.2 btop
 
 echo "Konfiguriere UFW Firewall..."
 ufw allow OpenSSH
@@ -346,4 +349,6 @@ systemctl restart jitsi-videobridge2
 systemctl restart prosody
 systemctl restart jicofo
 
-echo "Installation abgeschlossen. TLS-Zertifikat kann später mit install-letsencrypt-cert.sh eingerichtet werden."
+echo "Installation abgeschlossen. TLS-Zertifikat muss noch manuell mit install-letsencrypt-cert.sh eingerichtet werden."
+
+mail -s "Jitsi-Installation abgeschlossen auf $(hostname)" karsten@karstenschneeberger.de < /var/log/jitsi-setup.log
