@@ -23,14 +23,6 @@ Nach erfolgreicher Ausführung von `jitsi-setup.sh` wird Jitsi zunächst mit ein
 /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
 ```
 
-Alternativ steht im Repository das Skript `install-letsencrypt-cert.sh` bereit, das dich vorab informiert und optional prüft, ob der Hostname korrekt aufgelöst wird:
-
-```bash
-wget -O /root/install-letsencrypt-cert.sh https://raw.githubusercontent.com/karstenschneeberger/jitsi-setup/master/install-letsencrypt-cert.sh
-chmod +x /root/install-letsencrypt-cert.sh
-bash /root/install-letsencrypt-cert.sh
-```
-
 **Hinweis:**
 
 - Der Domainname (`meet.karstenschneeberger.de`) muss öffentlich erreichbar und im DNS korrekt gesetzt sein.

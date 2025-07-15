@@ -292,7 +292,45 @@ ln -sf /etc/nginx/sites-available/$(hostname -f).conf /etc/nginx/sites-enabled/$
 echo "Entferne NGINX-Logfiles..."
 rm -f /var/log/nginx/access.log /var/log/nginx/error.log
 
-echo "Überschreibe /usr/share/jitsi-meet/interface_config.js mit bereinigter Version..."
+echo "Ersetze /etc/jitsi/videobridge/logging.properties..."
+cat > /etc/jitsi/videobridge/logging.properties << 'EOF'
+handlers= java.util.logging.ConsoleHandler
+#handlers= java.util.logging.ConsoleHandler, com.agafua.syslog.SyslogHandler
+#handlers= java.util.logging.ConsoleHandler, io.sentry.jul.SentryHandler
+
+java.util.logging.ConsoleHandler.level = ALL
+java.util.logging.ConsoleHandler.formatter = org.jitsi.utils.logging2.JitsiLogFormatter
+
+org.jitsi.utils.logging2.JitsiLogFormatter.programname=JVB
+.level=WARNING
+
+# Syslog (uncomment handler to use)
+com.agafua.syslog.SyslogHandler.transport = udp
+com.agafua.syslog.SyslogHandler.facility = local0
+com.agafua.syslog.SyslogHandler.port = 514
+com.agafua.syslog.SyslogHandler.hostname = localhost
+com.agafua.syslog.SyslogHandler.formatter = org.jitsi.utils.logging2.JitsiLogFormatter
+com.agafua.syslog.SyslogHandler.escapeNewlines = false
+
+# Sentry (uncomment handler to use)
+io.sentry.jul.SentryHandler.level=WARNING
+
+# time series logging
+java.util.logging.SimpleFormatter.format= %5$s%n
+java.util.logging.FileHandler.level = ALL
+java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter
+java.util.logging.FileHandler.pattern = /tmp/jvb-series.log
+java.util.logging.FileHandler.limit = 200000000
+java.util.logging.FileHandler.count = 1
+java.util.logging.FileHandler.append = false
+
+timeseries.level=OFF
+timeseries.useParentHandlers = false
+# time series logging is disabled by default. Uncomment the line below to enable it.
+#timeseries.handlers = java.util.logging.FileHandler
+EOF
+
+echo "Ersetze /usr/share/jitsi-meet/interface_config.js mit bereinigter Version..."
 
 cat > /usr/share/jitsi-meet/interface_config.js << 'EOF'
 var interfaceConfig = {
@@ -340,6 +378,90 @@ var interfaceConfig = {
     VIDEO_QUALITY_LABEL_DISABLED: false,
     makeJsonParserHappy: 'even if last key had a trailing comma'
 };
+EOF
+
+echo "Ersetze /etc/jitsi/meet/$(hostname -f)-config.js mit bereinigter Version..."
+
+cat > /etc/jitsi/meet/$(hostname -f)-config.js << 'EOF'
+var subdir = '<!--# echo var="subdir" default="" -->';
+var subdomain = '<!--# echo var="subdomain" default="" -->';
+
+if (subdomain) {
+    subdomain = subdomain.substr(0, subdomain.length - 1).split('.')
+        .join('_')
+        .toLowerCase() + '.';
+}
+
+if (subdir.startsWith('<!--')) {
+    subdir = '';
+}
+
+if (subdomain.startsWith('<!--')) {
+    subdomain = '';
+}
+
+var enableJaaS = false;
+
+var config = {
+    hosts: {
+        domain: 'meet.karstenschneeberger.de',
+        muc: 'conference.' + subdomain + 'meet.karstenschneeberger.de',
+    },
+
+    bosh: 'https://meet.karstenschneeberger.de/' + subdir + 'http-bind',
+    websocket: 'wss://meet.karstenschneeberger.de/' + subdir + 'xmpp-websocket',
+
+    bridgeChannel: {
+    },
+
+    testing: {
+    },
+
+    enableNoAudioDetection: true,
+    enableNoisyMicDetection: true,
+
+    resolution: 1080,
+    maxFullResolutionParticipants: 2,
+
+    constraints: {
+        video: {
+            height: {
+                ideal: 720,
+                max: 720,
+                min: 240,
+            },
+        },
+    },
+
+
+    channelLastN: 5,
+
+    hideEmailInSettings: true,
+    disableThirdPartyRequests: true,
+
+
+    p2p: {
+        enabled: false,
+        stunServers: [
+            { urls: 'stun:meet.karstenschneeberger.de:3478' },
+        ],
+    },
+
+    analytics: {
+        disabled: true,
+    },
+
+
+    doNotStoreRoom: true,
+
+};
+
+// Set the default values for JaaS customers
+if (enableJaaS) {
+    config.dialInNumbersUrl = 'https://conference-mapper.jitsi.net/v1/access/dids';
+    config.dialInConfCodeUrl = 'https://conference-mapper.jitsi.net/v1/access';
+    config.roomPasswordNumberOfDigits = 10; // skip re-adding it (do not remove comment)
+}
 EOF
 
 echo "Lade systemd und nginx neu..."
