@@ -32,12 +32,10 @@ var config = {
     testing: {
     },
 
-    disableAudioLevels: true,
     enableNoAudioDetection: true,
     enableNoisyMicDetection: true,
 
     resolution: 1080,
-    enableLayerSuspension: true,
     maxFullResolutionParticipants: 2,
 
     constraints: {
