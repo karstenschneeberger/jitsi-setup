@@ -417,24 +417,26 @@ var config = {
     testing: {
     },
 
+    disableAudioLevels: true,
     enableNoAudioDetection: true,
     enableNoisyMicDetection: true,
 
     resolution: 1080,
+    enableLayerSuspension: true,
     maxFullResolutionParticipants: 2,
 
     constraints: {
         video: {
             height: {
                 ideal: 720,
-                max: 720,
+                max: 1080,
                 min: 240,
             },
         },
     },
 
 
-    channelLastN: 5,
+    channelLastN: 4,
 
     hideEmailInSettings: true,
     disableThirdPartyRequests: true,

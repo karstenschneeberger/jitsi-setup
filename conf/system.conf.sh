@@ -1,4 +1,0 @@
-[Manager]
-DefaultLimitNOFILE=65000
-DefaultLimitNPROC=65000
-DefaultTasksMax=65000
